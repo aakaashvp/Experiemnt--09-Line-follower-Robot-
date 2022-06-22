@@ -71,45 +71,84 @@ The circuit consists of mainly four parts: Two IR sensors, one motor drive, two 
 
 
 ### PROGRAM 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
+ ```c++
+ #include <AFMotor.h>
 
- 
- 
+//defining pins and variables
+#define lefts A0
+#define rights A1
+
+//defining motors
+AF_DCMotor motor1(1, MOTOR12_1KHZ); 
+AF_DCMotor motor2(2, MOTOR12_1KHZ);
+AF_DCMotor motor3(3, MOTOR34_1KHZ);
+AF_DCMotor motor4(4, MOTOR34_1KHZ);
 
 
 
+void setup() {
+  //Setting the motor speed
+  motor1.setSpeed(180);
+  motor2.setSpeed(180);
+  motor3.setSpeed(180);
+  motor4.setSpeed(180);
+  //Declaring PIN input types
+  pinMode(lefts,INPUT);
+  pinMode(rights,INPUT);
+  //Begin serial communication
+  Serial.begin(9600);
+  
+}
 
+void loop(){
+  //Printing values of the sensors to the serial monitor
+  Serial.println(analogRead(lefts));
+  Serial.println(analogRead(rights));
+  //line detected by both
+  if(analogRead(lefts)<=350 && analogRead(rights)<=350){
+    //Forward
+    motor1.run(FORWARD);
+    motor2.run(FORWARD);
+    motor3.run(FORWARD);
+    motor4.run(FORWARD);
+  }
+  //line detected by left sensor
+  else if(analogRead(lefts)<=350 && !analogRead(rights)<=350){
+    //turn left
+    motor1.run(FORWARD);
+    motor2.run(FORWARD);
+    motor3.run(BACKWARD);
+    motor4.run(BACKWARD);
+    
+  }
+  //line detected by right sensor
+  else if(!analogRead(lefts)<=350 && analogRead(rights)<=350){
+    //turn right
+    motor1.run(BACKWARD);
+    motor2.run(BACKWARD);
+    motor3.run(FORWARD);
+    motor4.run(FORWARD);
+   
+  }
+  //line detected by none
+  else if(!analogRead(lefts)<=350 && !analogRead(rights)<=350){
+    //stop
+    motor1.run(RELEASE);
+    motor2.run(RELEASE);
+    motor3.run(RELEASE);
+    motor4.run(RELEASE);
+   
+  }
+  
+}
+ ```
 
+### RESULTS :  
+Line follower robot (LFR) has sucessfully configured to follows a line drawn on the ground to either detect a dark line on a white surface or a white line on a dark by control its motion using differential velocity 
 
-
-
-
-
-
-
-
-
-### RESULTS : 
 ### WORKING VIDEO  :
+
+https://user-images.githubusercontent.com/75234588/174421069-c0e69ec8-865a-451d-9ba0-1fc87ce04c7a.mp4
 
 
 
